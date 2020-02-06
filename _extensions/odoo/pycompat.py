@@ -1,13 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 
-PY2 = sys.version_info[0] == 2
-
-if PY2:
-    text_type = unicode
-else:
-    text_type = str
-
 def to_text(source):
     """ Generates a text value (an instance of text_type) from an arbitrary 
     source.
@@ -23,5 +16,5 @@ def to_text(source):
     if isinstance(source, bytes):
         return source.decode('utf-8')
 
-    return text_type(source)
+    return str(source)
 

@@ -2,11 +2,12 @@
 import os.path
 import posixpath
 import re
-import urllib
+import sphinx
 
 from docutils import nodes
 from sphinx import addnodes, util
 from sphinx.locale import admonitionlabels
+import sys
 
 from . import pycompat
 
@@ -44,7 +45,16 @@ class BootstrapTranslator(nodes.NodeVisitor, object):
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
     ]
 
-    def __init__(self, builder, document):
+    def __init__(self, arg1, arg2):
+        if int(sphinx.__version__.split('.')[0]) >= 2:
+            # TODO: remove this hack in V14.0
+            # This preserve compatibility between sphinx 1.6 and 2.3
+            # in python3, the arguments must be inverted.
+            builder = arg2
+            document = arg1
+        else:
+            builder = arg1
+            document = arg2
         super(BootstrapTranslator, self).__init__(document)
         self.builder = builder
         self.body = []
@@ -58,6 +68,10 @@ class BootstrapTranslator(nodes.NodeVisitor, object):
         self.context = []
         self.section_level = 0
 
+        if int(sphinx.__version__.split('.')[0]) >= 2:
+            # TODO: do that by default in V14.0
+            # This preserve compatibility between sphinx 1.6 and 2.3
+            self.config = builder.config
         self.highlightlang = self.highlightlang_base = self.builder.config.highlight_language
         self.highlightopts = getattr(builder.config, 'highlight_options', {})
 
